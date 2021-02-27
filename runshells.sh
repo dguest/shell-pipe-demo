@@ -7,7 +7,10 @@
 set -eu
 
 # clean up when we exit
-trap 'echo cleaning up; rm -r bobos' EXIT
+trap 'echo cleaning up; rm -r bobos; rm thepipe' EXIT
+
+# add a pipe
+mkfifo thepipe
 
 # set the output directory. Note we have to export it: if not it won't
 # be imported into the subshells.
@@ -32,7 +35,6 @@ function addbobo() {
             # this is the only thing we echo to stdout, so we can pass
             # it to the next process
             echo $outpath
-            sleep 0.5
         done
     )
 }
@@ -50,9 +52,13 @@ function readbobo() {
     )
 }
 
-echo "feeding pipe"
+echo "making pipe"
+cat thepipe | addbobo | readbobo &
+
+# now we feed the pipe
 for num in $(seq 10); do
     echo bobo${num}.txt
-done | addbobo | readbobo
+    sleep 0.5
+done > thepipe
 
 
