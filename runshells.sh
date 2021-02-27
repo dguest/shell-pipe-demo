@@ -23,9 +23,9 @@ function addbobo() {
         # set up something crazy here
         while read item
         do
-            # this could do anything, now it just echos but it could
-            # do something complicated and then echo the name of the
-            # output file so it can be piped to the next process
+            # this could do anything, for now it's just creating a
+            # file, but one could imagine creating an output data file
+            # in some weird environemnt.
 
             # simple do something
             outpath=${OUTDIR}/${item}
@@ -36,6 +36,7 @@ function addbobo() {
             # it to the next process
             echo $outpath
         done
+        echo "reached end of addbobo" >&2
     )
 }
 
@@ -49,6 +50,7 @@ function readbobo() {
             cat $item
             echo -e "done!\n"
         done
+        echo "reached end of readbobo" >&2
     )
 }
 
@@ -56,9 +58,9 @@ echo "making pipe"
 cat thepipe | addbobo | readbobo &
 
 # now we feed the pipe
+echo "loopin"
 for num in $(seq 10); do
     echo bobo${num}.txt
     sleep 0.5
 done > thepipe
-
 
